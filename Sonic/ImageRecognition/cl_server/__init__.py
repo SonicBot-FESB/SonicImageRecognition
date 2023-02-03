@@ -2,10 +2,7 @@ from . import commands as cmd
 from .server import ClServer
 from .. import config
 
-server = ClServer(
-    config.SERVER_HOST,
-    config.SERVER_PORT
-)
+server = ClServer(config.SERVER_HOST, config.SERVER_PORT)
 
 server.regsiter_command_handler("RES", cmd.handle_set_resolution)
 server.regsiter_command_handler("IMG", cmd.handle_get_image)

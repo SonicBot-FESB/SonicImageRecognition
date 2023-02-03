@@ -53,5 +53,6 @@ def train(training_images: NDArray, training_labels: NDArray):
     # Save the model
     model.save(model_save_path)
 
+
 def format_input(grayscale_image: NDArray):
     return grayscale_image.reshape(1, 28, 28, 1)

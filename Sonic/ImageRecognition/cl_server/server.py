@@ -6,26 +6,23 @@ from ..exceptions import CommandNotImplemented
 
 class ClServer:
     _method_handlers = {
-        "RES": None, # SET RESOLUTION
-        "IMG": None, # GET IMAGE
-        "SVC": None, # SET VERTICAL CROP
-        "SHC": None, # SET HORIZONTAL CROP
-        "ONN": None, # START IMAGE PROCESSING LOOP
-        "OFF": None, # STOP IMAGE PROCESSING LOOP
-        "STT": None, # GET RUNING STATUS
-        "GSF": None, # SET GRAYSCALE FILTER
-        "PNG": None, # PING
+        "RES": None,  # SET RESOLUTION
+        "IMG": None,  # GET IMAGE
+        "SVC": None,  # SET VERTICAL CROP
+        "SHC": None,  # SET HORIZONTAL CROP
+        "ONN": None,  # START IMAGE PROCESSING LOOP
+        "OFF": None,  # STOP IMAGE PROCESSING LOOP
+        "STT": None,  # GET RUNING STATUS
+        "GSF": None,  # SET GRAYSCALE FILTER
+        "PNG": None,  # PING
     }
 
     def __init__(self, host, port):
         self.host = host
         self.port = port
 
-
     async def start(self):
-        self.server = await asyncio.start_server(
-            self.on_connect, self.host, self.port
-        )
+        self.server = await asyncio.start_server(self.on_connect, self.host, self.port)
 
         print("Started server")
         async with self.server:
@@ -34,15 +31,18 @@ class ClServer:
     def close(self):
         self.server.close()
 
-
-    async def on_connect(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+    async def on_connect(
+        self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter
+    ):
         data = await reader.read(1000)
         message = data.decode()
         message = message.rstrip("\n")
         print(f"Received: {message}")
-        
+
         command, *args = message.split(" ")
-        handler = self._method_handlers.get(command) or self.method_not_implemented_handler
+        handler = (
+            self._method_handlers.get(command) or self.method_not_implemented_handler
+        )
         try:
             response = command
             response_data = handler(command, *args)
@@ -56,10 +56,8 @@ class ClServer:
         writer.write(response.encode())
         await writer.drain()
 
-
     def method_not_implemented_handler(self, command, *_):
         raise CommandNotImplemented(f"Method {command} not implemented")
-
 
     def regsiter_command_handler(self, command, callback):
         if command not in self._method_handlers:

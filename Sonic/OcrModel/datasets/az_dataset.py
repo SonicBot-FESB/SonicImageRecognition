@@ -32,7 +32,7 @@ def _load_az_row(row):
 
 
 def load_dataset():
-    total_labels = 26 # Number of characters in the alphabet
+    total_labels = 26  # Number of characters in the alphabet
 
     dataset_path = environ["AZ_DATASET_PATH"]
 
@@ -52,5 +52,7 @@ def load_dataset():
     images = np.array(images, dtype="float32")
     labels = np.array(labels, dtype="int")
 
-    return images, labels,
-
+    return (
+        images,
+        labels,
+    )

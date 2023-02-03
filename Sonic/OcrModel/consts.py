@@ -8,6 +8,7 @@ class NeuralNetworks(str, Enum):
     fully_connected = "fully_connected"
     convolutional = "convolutional"
 
+
 neural_network_model_path_map = {
     "fully_connected": environ["FULLY_CONNECTED_MODEL_PATH"],
     "convolutional": environ["CONVOLUTIONAL_MODEL_PATH"],

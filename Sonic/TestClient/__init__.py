@@ -8,6 +8,7 @@ load_dotenv(override=True)
 SERVER_HOST = environ["SERVER_HOST"]
 SERVER_PORT = environ["SERVER_PORT"]
 
+
 def save_b64_image(image_b64: str):
     image_jpg = b64decode(image_b64)
     with open("assets/test.jpg", "wb+") as file:
@@ -19,7 +20,8 @@ async def tcp_client(message: str):
     writer: asyncio.StreamWriter
 
     reader, writer = await asyncio.open_connection(
-        SERVER_HOST, SERVER_PORT,
+        SERVER_HOST,
+        SERVER_PORT,
     )
 
     writer.write((message).encode())

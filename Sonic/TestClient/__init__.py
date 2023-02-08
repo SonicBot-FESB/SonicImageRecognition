@@ -15,7 +15,7 @@ def save_b64_image(image_b64: str):
         file.write(image_jpg)
 
 
-async def tcp_client(message: str):
+async def tcp_client():
     reader: asyncio.StreamReader
     writer: asyncio.StreamWriter
 
@@ -23,7 +23,10 @@ async def tcp_client(message: str):
         SERVER_HOST,
         SERVER_PORT,
     )
+    return reader, writer
 
+
+async def send_msg(reader, writer, message:str):
     writer.write((message).encode())
     await writer.drain()
 
@@ -34,12 +37,16 @@ async def tcp_client(message: str):
     if command == "IMG":
         save_b64_image(response[0])
 
-    writer.close()
-    await writer.wait_closed()
-
 
 def run():
+    loop = asyncio.get_event_loop()
+    reader, writer = loop.run_until_complete(tcp_client())
+    print(reader, writer)
+
     while msg := input("Command: "):
         if not msg or msg == "Q":
             break
-        asyncio.run(tcp_client(msg))
+        loop.run_until_complete(send_msg(reader, writer, msg))
+
+    writer.close()
+    loop.run_until_complete(writer.wait_closed())

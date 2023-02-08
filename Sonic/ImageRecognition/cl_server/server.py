@@ -17,6 +17,8 @@ class ClServer:
         "PNG": None,  # PING
     }
 
+    _connections = []
+
     def __init__(self, host, port):
         self.host = host
         self.port = port
@@ -34,9 +36,23 @@ class ClServer:
     async def on_connect(
         self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter
     ):
+        conn_data = writer.get_extra_info("peername")
+        print(f"New client connected {conn_data}")
+
+        while not writer.is_closing():
+            await self.handle_incoming_data(reader, writer)
+
+    
+    async def handle_incoming_data(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
         data = await reader.read(1000)
         message = data.decode()
         message = message.rstrip("\n")
+
+        if not message:
+            print("Client disconnected")
+            writer.close()
+            return
+
         print(f"Received: {message}")
 
         command, *args = message.split(" ")
@@ -52,9 +68,12 @@ class ClServer:
         except Exception as ex:
             print(traceback.format_exc())
             response = f"ERR {str(ex)}"
+            return
 
         writer.write(response.encode())
         await writer.drain()
+
+     
 
     def method_not_implemented_handler(self, command, *_):
         raise CommandNotImplemented(f"Method {command} not implemented")

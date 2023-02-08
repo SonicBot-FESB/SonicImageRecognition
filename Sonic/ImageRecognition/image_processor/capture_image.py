@@ -27,7 +27,7 @@ def capture_image(cap, model: Sequential, format_input: Callable, show_image: bo
     ImageStorage.set_image(mask)
 
     if show_image:
-        print(f"{prediction_data['character']} - {prediction_data['probability']}%")
+        # print(f"{prediction_data['character']} - {prediction_data['probability']}%")
         cv2.waitKey(1)
         cv2.imshow("Preview", mask)
         cv2.imshow(

@@ -1,3 +1,4 @@
+from typing import Union
 from datetime import datetime
 from numpy import ndarray
 from base64 import b64encode
@@ -5,7 +6,7 @@ import cv2
 
 
 class ImageStorage:
-    _image: ndarray | None = None
+    _image: Union[ndarray, None] = None
     _captured_at = None
 
     @classmethod

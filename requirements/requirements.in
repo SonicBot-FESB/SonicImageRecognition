@@ -1,7 +1,7 @@
 opencv-contrib-python
 asyncio
 python-dotenv
-tensorflow-cpu
+tensorflow[cpu]
 pillow
 wget
 typer

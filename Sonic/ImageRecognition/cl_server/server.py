@@ -17,7 +17,7 @@ class ClServer:
         "PNG": None,  # PING
     }
 
-    _connections = []
+    _connections = {}
 
     def __init__(self, host, port):
         self.host = host
@@ -37,10 +37,20 @@ class ClServer:
         self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter
     ):
         conn_data = writer.get_extra_info("peername")
+        self._connections[conn_data] = (reader, writer)
+
         print(f"New client connected {conn_data}")
 
         while not writer.is_closing():
             await self.handle_incoming_data(reader, writer)
+        self._connections.pop(conn_data)
+
+
+    async def broadcast_data(self, message: str):
+        writer: asyncio.StreamWriter
+        for _, writer in self._connections.values():
+            writer.write(message.encode())
+            await writer.drain()
 
     
     async def handle_incoming_data(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):

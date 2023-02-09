@@ -1,3 +1,4 @@
+from os import environ
 from ..storage.config_storage import ImageRecognitionConfig
 from ..storage.image_storage import ImageStorage
 
@@ -53,3 +54,11 @@ def handle_set_grayscale_filter(_, *args: str):
 
 def handle_ping(_):
     return ["PONG"]
+
+
+def get_prediction_response(prediction_data: dict):
+    send_prediction_treshold = int(environ.get("PREDICTION_STREAM_TRESHOLD", "50"))
+    probability = prediction_data["probability"]
+    if probability > send_prediction_treshold:
+        return f"PRD {prediction_data['character']} {probability}"
+    return None

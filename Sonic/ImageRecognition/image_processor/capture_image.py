@@ -11,7 +11,7 @@ from ..storage.image_storage import ImageStorage
 from keras.models import Sequential
 
 
-def capture_image(cap, model: Sequential, format_input: Callable, show_image: bool):
+async def capture_image(cap, model: Sequential, format_input: Callable, show_image: bool):
     _, frame = cap.read()
 
     grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -33,3 +33,4 @@ def capture_image(cap, model: Sequential, format_input: Callable, show_image: bo
         cv2.imshow(
             "Preview resized", prediction_data["formated_input"].reshape(28, 28, 1)
         )
+    return prediction_data

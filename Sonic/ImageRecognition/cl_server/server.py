@@ -5,19 +5,7 @@ from ..exceptions import CommandNotImplemented
 
 
 class ClServer:
-    _method_handlers = {
-        "RES": None,  # SET RESOLUTION
-        "IMG": None,  # GET IMAGE
-        "SVC": None,  # SET VERTICAL CROP
-        "SHC": None,  # SET HORIZONTAL CROP
-        "ONN": None,  # START IMAGE PROCESSING LOOP
-        "OFF": None,  # STOP IMAGE PROCESSING LOOP
-        "STT": None,  # GET RUNING STATUS
-        "GSF": None,  # SET GRAYSCALE FILTER
-        "PNG": None,  # PING
-        "WTS": None,  # SET WHITE COLOR PERCENTAGE PREDICTION TRESHOLD
-        "PRD": None,  # GET PREDICTION FOR LAST CAPTURED IMAGE
-    }
+    _method_handlers = {}
 
     _connections = {}
 
@@ -109,6 +97,4 @@ class ClServer:
         raise CommandNotImplemented(f"Method {command} not implemented")
 
     def register_command_handler(self, command, callback):
-        if command not in self._method_handlers:
-            raise KeyError(f"Command: {command} not recognized")
         self._method_handlers[command] = callback

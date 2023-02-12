@@ -15,6 +15,8 @@ class ClServer:
         "STT": None,  # GET RUNING STATUS
         "GSF": None,  # SET GRAYSCALE FILTER
         "PNG": None,  # PING
+        "WTS": None,  # SET WHITE COLOR PERCENTAGE PREDICTION TRESHOLD
+        "PRD": None,  # GET PREDICTION FOR LAST CAPTURED IMAGE
     }
 
     _connections = {}
@@ -33,6 +35,12 @@ class ClServer:
     def close(self):
         self.server.close()
 
+    def remove_conn(self, writer: asyncio.StreamWriter):
+        conn_data = writer.get_extra_info("peername")
+        if conn_data in self._connections:
+            print(f"Disconnecting client: {conn_data}")
+            self._connections.pop(conn_data)
+
     async def on_connect(
         self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter
     ):
@@ -43,18 +51,26 @@ class ClServer:
 
         while not writer.is_closing():
             await self.handle_incoming_data(reader, writer)
-        self._connections.pop(conn_data)
 
+        self.remove_conn(writer)
 
     async def broadcast_data(self, message: str):
         writer: asyncio.StreamWriter
-        for _, writer in self._connections.values():
-            writer.write(message.encode())
-            await writer.drain()
+        connections_copy = [*self._connections.values()]
+        for _, writer in connections_copy:
+            try:
+                writer.write(message.encode())
+                await writer.drain()
+            except Exception:
+                self.remove_conn(writer)
 
     
     async def handle_incoming_data(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        data = await reader.read(1000)
+        try:
+            data = await reader.read(1000)
+        except Exception:
+            self.remove_conn(writer)
+            return
         message = data.decode()
         message = message.rstrip("\n")
 
@@ -80,15 +96,19 @@ class ClServer:
             response = f"ERR {str(ex)}"
             return
 
-        writer.write(response.encode())
-        await writer.drain()
+        try:
+            writer.write(response.encode())
+            await writer.drain()
+        except Exception:
+            print("Lost connection 2")
+            await writer.wait_closed()
 
      
 
     def method_not_implemented_handler(self, command, *_):
         raise CommandNotImplemented(f"Method {command} not implemented")
 
-    def regsiter_command_handler(self, command, callback):
+    def register_command_handler(self, command, callback):
         if command not in self._method_handlers:
             raise KeyError(f"Command: {command} not recognized")
         self._method_handlers[command] = callback

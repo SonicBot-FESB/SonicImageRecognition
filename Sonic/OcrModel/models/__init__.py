@@ -48,7 +48,7 @@ def predict_from_grayscale(
         interpolation=cv2.INTER_NEAREST_EXACT,
     )
     mask_resized = format_input(mask_resized)
-    predicted = model.predict(mask_resized)
+    predicted = model.predict(mask_resized, verbose=verbose)
 
     if not verbose:
         return mask_resized, predicted

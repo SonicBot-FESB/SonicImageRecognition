@@ -1,4 +1,6 @@
 from os import environ
+
+from Sonic.ImageRecognition.predict_character import predict_character
 from ..storage.config_storage import ImageRecognitionConfig
 from ..storage.image_storage import ImageStorage
 
@@ -52,13 +54,37 @@ def handle_set_grayscale_filter(_, *args: str):
     ImageRecognitionConfig.set_grayscale_range(lower_limit, upper_limit)
 
 
+def handle_set_white_treshold(_, *args: str):
+    try:
+        white_treshold = int(args[0])
+    except Exception:
+        raise ValueError(f"Invalid arguments: {args}")
+
+    ImageRecognitionConfig.set_white_percentage_prediction_treshold(white_treshold)
+
+
 def handle_ping(_):
     return ["PONG"]
 
 
-def get_prediction_response(prediction_data: dict):
-    send_prediction_treshold = int(environ.get("PREDICTION_STREAM_TRESHOLD", "50"))
-    probability = prediction_data["probability"]
-    if probability > send_prediction_treshold:
-        return f"PRD {prediction_data['character']} {probability}"
-    return None
+def handle_predict_character(_, *args):
+    mask = ImageStorage.get_image() 
+    model, format_input = ImageRecognitionConfig.get_model_config()
+
+    if not all((mask is not None, model, format_input)):
+        return ["A", "0"]
+
+    prediction_data = predict_character(
+        mask,
+        model,
+        format_input,
+    )
+
+    return [
+        prediction_data["character"],
+        prediction_data["probability"],
+    ]
+
+
+def get_character_detected_message():
+    return "CHR"

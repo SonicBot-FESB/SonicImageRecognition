@@ -1,3 +1,5 @@
+from typing import Callable
+from keras.models import Sequential
 from ..exceptions import InvalidVideoResolution, InvalidRange, OCRInProgress
 
 
@@ -11,12 +13,17 @@ VIDEO_RESOLUTIONS = {
 
 
 class ImageRecognitionConfig:
-    _run_ocr = True
-    _grayscale_range = [182, 255]
+    _run_ocr = False
+    _grayscale_range = [25, 255]
     _resolution = VIDEO_RESOLUTIONS["720p"]
 
     _vertical_crop_range = [0, 0]
     _horizontal_crop_range = [0, 0]
+
+    _white_percentage_prediction_treshold = 30
+
+    _model = None
+    _format_input = None
 
     @classmethod
     def stop(cls):
@@ -91,3 +98,24 @@ class ImageRecognitionConfig:
     @classmethod
     def get_grayscale_range(cls):
         return cls._grayscale_range
+
+    @classmethod
+    def get_white_percentage_prediction_treshold(cls):
+        return cls._white_percentage_prediction_treshold
+
+    @classmethod
+    def set_white_percentage_prediction_treshold(cls, val):
+        cls._white_percentage_prediction_treshold = val
+
+    @classmethod
+    def should_predict(cls, white_percentage):
+        return white_percentage >= cls._white_percentage_prediction_treshold
+
+    @classmethod
+    def configure_prediction_model(cls, model: Sequential, format_input: Callable):
+        cls._model = model
+        cls._format_input = format_input
+
+    @classmethod
+    def get_model_config(cls):
+        return cls._model, cls._format_input

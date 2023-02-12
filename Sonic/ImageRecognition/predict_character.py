@@ -1,4 +1,6 @@
+from os import environ
 from typing import Callable
+
 from keras.models import Sequential
 
 import numpy as np
@@ -7,6 +9,8 @@ from numpy.typing import NDArray
 from Sonic.OcrModel import models
 
 
+VERBOSE = environ.get("VERBOSE", "False") == "True"
+
 def predict_character(
     grayscale_image: NDArray, model: Sequential, format_input: Callable
 ):
@@ -14,7 +18,7 @@ def predict_character(
         model,
         format_input,
         grayscale_image,
-        verbose=False,
+        verbose=VERBOSE,
     )
 
     predictions_uhs = [

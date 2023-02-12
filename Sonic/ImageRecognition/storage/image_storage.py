@@ -15,6 +15,10 @@ class ImageStorage:
         cls._captured_at = datetime.now().timestamp()
 
     @classmethod
+    def get_image(cls):
+        return cls._image
+
+    @classmethod
     def get_image_base64(cls):
         if cls._image is None or cls._captured_at is None:
             raise PermissionError("Cannot access image, image processing not started")

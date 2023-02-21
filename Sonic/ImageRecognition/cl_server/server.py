@@ -85,8 +85,7 @@ class ClServer:
             return
 
         try:
-            writer.write((response + "\n").encode())
-            await writer.drain()
+            await self.broadcast_data(response)
         except Exception:
             print("Lost connection 2")
             await writer.wait_closed()

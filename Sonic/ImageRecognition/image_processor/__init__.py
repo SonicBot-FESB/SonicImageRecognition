@@ -35,7 +35,7 @@ async def run():
 
         if (
             not ImageRecognitionConfig.should_predict(white_percentage) or 
-            ImageStorage.get_character_detected_freshness() < 0.5
+            ImageStorage.get_character_detected_freshness() < 0.3
         ):
             await asyncio.sleep(0.001)
             continue

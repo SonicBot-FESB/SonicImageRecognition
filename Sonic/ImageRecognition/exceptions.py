@@ -2,7 +2,7 @@ class OCRInProgress(Exception):
     ...
 
 
-class InvalidVideoResolution(Exception):
+class InvalidVideoRezolution(Exception):
     ...
 
 

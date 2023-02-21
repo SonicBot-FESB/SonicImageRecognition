@@ -8,6 +8,7 @@ import cv2
 class ImageStorage:
     _image: Union[ndarray, None] = None
     _captured_at = None
+    _character_detected_at = 0
 
     @classmethod
     def set_image(cls, img: ndarray):
@@ -25,3 +26,12 @@ class ImageStorage:
         retval, buffer = cv2.imencode(".jpg", cls._image)
         base64_img = b64encode(buffer).decode()
         return base64_img, cls._captured_at
+
+    @classmethod
+    def character_detected(cls):
+        cls._character_detected_at = datetime.now().timestamp() 
+
+    @classmethod
+    def get_character_detected_freshness(cls):
+        return datetime.now().timestamp() - cls._character_detected_at
+

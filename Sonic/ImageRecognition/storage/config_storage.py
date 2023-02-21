@@ -1,9 +1,9 @@
 from typing import Callable
 from keras.models import Sequential
-from ..exceptions import InvalidVideoResolution, InvalidRange, OCRInProgress
+from ..exceptions import InvalidVideoRezolution, InvalidRange, OCRInProgress
 
 
-VIDEO_RESOLUTIONS = {
+VIDEO_REZOLUTIONS = {
     "1080p": (1920, 1080),
     "720p": (1280, 720),
     "480p": (854, 480),
@@ -15,7 +15,7 @@ VIDEO_RESOLUTIONS = {
 class ImageRecognitionConfig:
     _run_ocr = False
     _grayscale_range = [25, 255]
-    _resolution = VIDEO_RESOLUTIONS["720p"]
+    _rezolution = VIDEO_REZOLUTIONS["720p"]
 
     _vertical_crop_range = [0, 0]
     _horizontal_crop_range = [0, 0]
@@ -38,21 +38,21 @@ class ImageRecognitionConfig:
         return cls._run_ocr
 
     @classmethod
-    def set_resolution(cls, resolution_name):
+    def set_rezolution(cls, rezolution_name):
         if cls._run_ocr:
-            raise OCRInProgress("Can't change resolution while ocr is running")
-        if resolution_name not in VIDEO_RESOLUTIONS:
-            raise InvalidVideoResolution(f"Invalid video resolution: {resolution_name}")
+            raise OCRInProgress("Can't change rezolution while ocr is running")
+        if rezolution_name not in VIDEO_REZOLUTIONS:
+            raise InvalidVideoRezolution(f"Invalid video rezolution: {rezolution_name}")
 
-        cls._resolution = VIDEO_RESOLUTIONS[resolution_name]
+        cls._rezolution = VIDEO_REZOLUTIONS[rezolution_name]
 
     @classmethod
-    def get_resolution(cls):
-        return cls._resolution
+    def get_rezolution(cls):
+        return cls._rezolution
 
     @classmethod
     def set_vertical_crop(cls, top_offset, bottom_offset):
-        max = cls._resolution[0]
+        max = cls._rezolution[0]
         if (
             top_offset > max
             or bottom_offset > max
@@ -68,7 +68,7 @@ class ImageRecognitionConfig:
 
     @classmethod
     def set_horizontal_crop(cls, left_offset, right_offset):
-        max = cls._resolution[1]
+        max = cls._rezolution[1]
         if (
             left_offset > max
             or right_offset > max

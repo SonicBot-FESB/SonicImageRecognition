@@ -5,8 +5,8 @@ from ..storage.config_storage import ImageRecognitionConfig
 from ..storage.image_storage import ImageStorage
 
 
-def handle_set_resolution(_, resolution_name: str):
-    ImageRecognitionConfig.set_resolution(resolution_name)
+def handle_set_rezolution(_, rezolution_name: str):
+    ImageRecognitionConfig.set_rezolution(rezolution_name)
 
 
 def handle_get_image(_):

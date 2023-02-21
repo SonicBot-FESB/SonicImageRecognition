@@ -47,7 +47,7 @@ class ClServer:
         connections_copy = [*self._connections.values()]
         for _, writer in connections_copy:
             try:
-                writer.write(message.encode())
+                writer.write((message + "\n").encode())
                 await writer.drain()
             except Exception:
                 self.remove_conn(writer)
@@ -85,7 +85,7 @@ class ClServer:
             return
 
         try:
-            writer.write(response.encode())
+            writer.write((response + "\n").encode())
             await writer.drain()
         except Exception:
             print("Lost connection 2")

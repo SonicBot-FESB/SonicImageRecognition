@@ -1,5 +1,6 @@
 import asyncio
 from typing import Callable
+from Sonic.ImageRecognition.storage.image_storage import ImageStorage
 
 from numpy.typing import NDArray
 from Sonic.ImageRecognition.cl_server import cl_server
@@ -32,11 +33,14 @@ async def run():
         mask = await capture_image(cap, bool(show_image))
         white_percentage = calculat_white_percentage(mask)
 
-        if not ImageRecognitionConfig.should_predict(white_percentage):
+        if (
+            not ImageRecognitionConfig.should_predict(white_percentage) or 
+            ImageStorage.get_character_detected_freshness() < 0.5
+        ):
             await asyncio.sleep(0.001)
             continue
-
-        print("CHR")
+            
+        ImageStorage.character_detected()
         chr_message = get_character_detected_message() 
         await cl_server.broadcast_data(chr_message)
 
